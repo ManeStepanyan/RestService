@@ -67,17 +67,25 @@ namespace RestService.Controllers
         [HttpPut]
         public async Task<ActionResult> Update(Category category)
         {
-            _dbContext.Attach(category);
-            _dbContext.Entry(category).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
+            var dbCategory = await _dbContext.Categories.FirstOrDefaultAsync(c => c.Id == category.Id);
+            if (dbCategory != null)
+            {
+                _dbContext.Attach(category);
+                _dbContext.Entry(category).State = EntityState.Modified;
+                await _dbContext.SaveChangesAsync();
+            }
             return NoContent();
         }
         [HttpPut("items")]
         public async Task<ActionResult> UpdateItem(Item item)
         {
-            _dbContext.Attach(item);
-            _dbContext.Entry(item).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
+            var dbItem = _dbContext.Items.FirstOrDefault(i => i.Id == item.Id);
+            if (dbItem != null)
+            {
+                _dbContext.Attach(item);
+                _dbContext.Entry(item).State = EntityState.Modified;
+                await _dbContext.SaveChangesAsync();
+            }
             return NoContent();
         }
         [HttpDelete("items/{id}")]
