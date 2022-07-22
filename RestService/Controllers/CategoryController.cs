@@ -29,7 +29,7 @@ namespace RestService.Controllers
         [HttpPost("{categoryId}")]
         public async Task<ActionResult<Category>> CreateItem(int categoryId, Item item)
         {
-            var category = _dbContext.Categories.FirstOrDefault(c => c.Id == categoryId);
+            var category =  await _dbContext.Categories.Include(c => c.Items).FirstOrDefaultAsync(c => c.Id == categoryId);
 
             if(category == null)
             {
@@ -54,7 +54,7 @@ namespace RestService.Controllers
 
             return Ok(categories);
         }
-        [HttpGet("{categoryId}")]
+        [HttpGet("{categoryId}/Items")]
         public async Task<ActionResult<Category>> GetItems(int categoryId, [FromQuery] PaginationFilter filter)
         {
             var categories = await _dbContext.Items.Where(i => i.CategoryId == categoryId)
